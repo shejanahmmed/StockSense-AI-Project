@@ -1,0 +1,97 @@
+# ==========================================
+# StockSense AI - Git Ignore Configuration
+# ==========================================
+
+# 1. Secret Environment & API Credentials (DO NOT COMMIT)
+.env
+.env.*
+.env*.local
+!.env.example
+*.key
+*.pem
+*.secret
+*.token
+
+# 2. Application Logs & Runtime Files
+*.log
+app.log
+logs/
+
+# 3. Local Edge Database & SQLite Storage
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+data/users.db
+
+# 4. Data Lakehouse, Raw Ingestion & Parquet Files
+data/raw/*
+!data/raw/sample.csv
+!data/raw/sample_multi_product.csv
+data/lakehouse/*
+data/processed/*
+data/external/*
+*.parquet
+*.csv
+!frontend/assets/sample/Demo.csv
+!data/raw/sample.csv
+!data/raw/sample_multi_product.csv
+
+# 5. Machine Learning Model Artifacts
+data/models/*
+!data/models/.gitkeep
+
+# 6. Python Bytecode, Caches & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 7. Scratch, Debugging & Ad-hoc Scripts
+scratch/
+test_upload.py
+
+# 8. Testing & Coverage Artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 9. Packaging & Distribution
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 10. Jupyter Notebook Caches
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# 11. IDE & OS Artifacts
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
