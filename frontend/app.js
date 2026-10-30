@@ -5461,13 +5461,58 @@ function initChartControls() {
 // ==========================================
 // Authentication & Database Logic
 // ==========================================
+function isTokenExpired(token) {
+    if (!token) return true;
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return true;
+        const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+        if (payload.exp && Date.now() >= payload.exp * 1000) {
+            return true;
+        }
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+function handleAuthExpired(message = 'Session expired. Please log in to continue.') {
+    localStorage.removeItem('stockSense_jwt');
+    localStorage.removeItem('stockSense_storeName');
+    checkAuth();
+    if (typeof showToast === 'function' && message) {
+        showToast(message, 'warning');
+    }
+}
+
+// Global fetch interceptor to catch 401 Unauthorized across all API calls
+if (!window._stockSenseFetchIntercepted) {
+    window._stockSenseFetchIntercepted = true;
+    const _originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+        const response = await _originalFetch.apply(this, args);
+        if (response.status === 401) {
+            const url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url ? args[0].url : '');
+            if (url.includes('/api/') && !url.includes('/api/user/login') && !url.includes('/api/user/signup')) {
+                console.warn('API returned 401 Unauthorized for ' + url + '. Session expired, redirecting to login.');
+                handleAuthExpired('Session expired. Please log in to continue.');
+            }
+        }
+        return response;
+    };
+}
+
 function checkAuth() {
     const savedName = localStorage.getItem('stockSense_storeName');
     const token = localStorage.getItem('stockSense_jwt');
     const appContainer = document.getElementById('appContainer');
     const authScreen = document.getElementById('authScreen');
     
-    if (!savedName || !token) {
+    if (!savedName || !token || isTokenExpired(token)) {
+        if (token && isTokenExpired(token)) {
+            localStorage.removeItem('stockSense_jwt');
+            localStorage.removeItem('stockSense_storeName');
+        }
         // Not logged in - Show Auth Screen
         if (appContainer) appContainer.style.display = 'none';
         if (authScreen) authScreen.style.display = 'flex';
