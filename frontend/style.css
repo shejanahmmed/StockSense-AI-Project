@@ -5417,100 +5417,154 @@ body.light-mode #promo-planner-section h2 {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Cycle colors: Card 1 (Purple) */
+/* Cycle colors: Card 1 (Solid Purple) */
 .promo-card:nth-child(3n+1) {
-    background: rgba(139, 92, 246, 0.12) !important;
-    border-color: rgba(139, 92, 246, 0.25) !important;
+    background: #3c1e7a !important;
+    background-color: #3c1e7a !important;
+    border-color: #a78bfa !important;
 }
 
 .promo-card:nth-child(3n+1):hover {
-    border-color: rgba(139, 92, 246, 0.5) !important;
+    border-color: #c4b5fd !important;
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.45) !important;
 }
 
 .promo-card:nth-child(3n+1) .promo-badge-tag,
 .promo-card:nth-child(3n+1) .promo-urgency-badge {
-    background: rgba(139, 92, 246, 0.12) !important;
-    color: #c4b5fd !important;
-    border: 1px solid rgba(139, 92, 246, 0.25) !important;
+    background: #4c2896 !important;
+    background-color: #4c2896 !important;
+    color: #ffffff !important;
+    border: 1px solid #c4b5fd !important;
+}
+
+.promo-card:nth-child(3n+1) .promo-card-dates {
+    background: #2e1462 !important;
+    background-color: #2e1462 !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
 }
 
 .promo-card:nth-child(3n+1) .promo-impact-showcase {
-    background: rgba(139, 92, 246, 0.04) !important;
-    border-color: rgba(139, 92, 246, 0.18) !important;
+    background: #2e1462 !important;
+    background-color: #2e1462 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .promo-card:nth-child(3n+1) .impact-val-num {
-    color: #a78bfa !important;
+    color: #ffffff !important;
+}
+
+.promo-card:nth-child(3n+1) .promo-card-footer {
+    background: #281056 !important;
+    background-color: #281056 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .promo-card:nth-child(3n+1) .footer-sku-code {
-    background: rgba(139, 92, 246, 0.1) !important;
-    color: #c4b5fd !important;
-    border: 1px solid rgba(139, 92, 246, 0.2) !important;
+    background: #4c2896 !important;
+    background-color: #4c2896 !important;
+    color: #ffffff !important;
+    border: 1px solid #c4b5fd !important;
 }
 
-/* Cycle colors: Card 2 (Red) */
+/* Cycle colors: Card 2 (Solid Red) */
 .promo-card:nth-child(3n+2) {
-    background: rgba(239, 68, 68, 0.1) !important;
-    border-color: rgba(239, 68, 68, 0.22) !important;
+    background: #6e1a24 !important;
+    background-color: #6e1a24 !important;
+    border-color: #f87171 !important;
 }
 
 .promo-card:nth-child(3n+2):hover {
-    border-color: rgba(239, 68, 68, 0.45) !important;
+    border-color: #fca5a5 !important;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.45) !important;
 }
 
 .promo-card:nth-child(3n+2) .promo-badge-tag,
 .promo-card:nth-child(3n+2) .promo-urgency-badge {
-    background: rgba(239, 68, 68, 0.1) !important;
-    color: #f87171 !important;
-    border: 1px solid rgba(239, 68, 68, 0.22) !important;
+    background: #882230 !important;
+    background-color: #882230 !important;
+    color: #ffffff !important;
+    border: 1px solid #fca5a5 !important;
+}
+
+.promo-card:nth-child(3n+2) .promo-card-dates {
+    background: #54111a !important;
+    background-color: #54111a !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
 }
 
 .promo-card:nth-child(3n+2) .promo-impact-showcase {
-    background: rgba(239, 68, 68, 0.04) !important;
-    border-color: rgba(239, 68, 68, 0.18) !important;
+    background: #54111a !important;
+    background-color: #54111a !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .promo-card:nth-child(3n+2) .impact-val-num {
-    color: #f87171 !important;
+    color: #ffffff !important;
+}
+
+.promo-card:nth-child(3n+2) .promo-card-footer {
+    background: #4a0d15 !important;
+    background-color: #4a0d15 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .promo-card:nth-child(3n+2) .footer-sku-code {
-    background: rgba(239, 68, 68, 0.1) !important;
-    color: #f87171 !important;
-    border: 1px solid rgba(239, 68, 68, 0.2) !important;
+    background: #882230 !important;
+    background-color: #882230 !important;
+    color: #ffffff !important;
+    border: 1px solid #fca5a5 !important;
 }
 
-/* Cycle colors: Card 3 (Green) */
+/* Cycle colors: Card 3 (Solid Green) */
 .promo-card:nth-child(3n) {
-    background: rgba(16, 185, 129, 0.1) !important;
-    border-color: rgba(16, 185, 129, 0.22) !important;
+    background: #0f4e37 !important;
+    background-color: #0f4e37 !important;
+    border-color: #34d399 !important;
 }
 
 .promo-card:nth-child(3n):hover {
-    border-color: rgba(16, 185, 129, 0.45) !important;
+    border-color: #6ee7b7 !important;
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.45) !important;
 }
 
 .promo-card:nth-child(3n) .promo-badge-tag,
 .promo-card:nth-child(3n) .promo-urgency-badge {
-    background: rgba(16, 185, 129, 0.1) !important;
-    color: #34d399 !important;
-    border: 1px solid rgba(16, 185, 129, 0.22) !important;
+    background: #156247 !important;
+    background-color: #156247 !important;
+    color: #ffffff !important;
+    border: 1px solid #6ee7b7 !important;
+}
+
+.promo-card:nth-child(3n) .promo-card-dates {
+    background: #0a3d2b !important;
+    background-color: #0a3d2b !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
 }
 
 .promo-card:nth-child(3n) .promo-impact-showcase {
-    background: rgba(16, 185, 129, 0.04) !important;
-    border-color: rgba(16, 185, 129, 0.18) !important;
+    background: #0a3d2b !important;
+    background-color: #0a3d2b !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .promo-card:nth-child(3n) .impact-val-num {
-    color: #34d399 !important;
+    color: #ffffff !important;
+}
+
+.promo-card:nth-child(3n) .promo-card-footer {
+    background: #073525 !important;
+    background-color: #073525 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .promo-card:nth-child(3n) .footer-sku-code {
-    background: rgba(16, 185, 129, 0.1) !important;
-    color: #34d399 !important;
-    border: 1px solid rgba(16, 185, 129, 0.2) !important;
+    background: #156247 !important;
+    background-color: #156247 !important;
+    color: #ffffff !important;
+    border: 1px solid #6ee7b7 !important;
 }
 
 .promo-card-header {
@@ -5542,8 +5596,8 @@ body.light-mode #promo-planner-section h2 {
     background: none !important;
     -webkit-background-clip: initial !important;
     background-clip: initial !important;
-    -webkit-text-fill-color: var(--text-primary) !important;
-    color: var(--text-primary) !important;
+    -webkit-text-fill-color: #ffffff !important;
+    color: #ffffff !important;
     margin: 0.1rem 0;
     display: block;
     height: auto;
@@ -5555,17 +5609,17 @@ body.light-mode #promo-planner-section h2 {
     align-items: center;
     gap: 0.45rem;
     font-size: 0.7rem;
-    color: var(--text-secondary) !important;
+    color: #ffffff !important;
     font-weight: 500;
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
     padding: 0.25rem 0.55rem;
     border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     width: fit-content;
 }
 
 .promo-card-dates i {
-    color: var(--text-muted) !important;
+    color: #ffffff !important;
     font-size: 0.8rem;
 }
 
@@ -5580,7 +5634,8 @@ body.light-mode #promo-planner-section h2 {
 .promo-impact-showcase .impact-label {
     font-size: 0.62rem;
     text-transform: uppercase;
-    color: var(--text-muted) !important;
+    color: #ffffff !important;
+    opacity: 0.9;
     letter-spacing: 0.08em;
     font-weight: 700;
 }
@@ -5595,24 +5650,26 @@ body.light-mode #promo-planner-section h2 {
     font-size: 1.25rem;
     font-weight: 800;
     letter-spacing: -0.02em;
+    color: #ffffff !important;
 }
 
 .promo-impact-showcase .impact-val-lbl {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-secondary) !important;
+    color: #ffffff !important;
 }
 
 .promo-impact-showcase .impact-val-lbl-full {
     font-size: 0.95rem;
     font-weight: 750;
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
 }
 
 .promo-card-reason {
     font-size: 0.78rem;
     line-height: 1.45;
-    color: var(--text-secondary) !important;
+    color: #ffffff !important;
+    opacity: 0.95;
     flex-grow: 1;
     margin: 0;
     display: block;
@@ -5666,8 +5723,8 @@ body.light-mode #promo-planner-section h2 {
     align-items: center;
     gap: 1rem;
     padding: 0.5rem 1.0rem;
-    background: rgba(0, 0, 0, 0.2) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
     margin: 0 -1.15rem -1.15rem -1.15rem;
@@ -5682,7 +5739,8 @@ body.light-mode #promo-planner-section h2 {
 .promo-target-label .footer-label {
     font-size: 0.65rem;
     text-transform: uppercase;
-    color: var(--text-muted) !important;
+    color: #ffffff !important;
+    opacity: 0.85;
     letter-spacing: 0.05em;
     font-weight: 600;
 }
@@ -5690,7 +5748,7 @@ body.light-mode #promo-planner-section h2 {
 .promo-target-label .footer-value {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
