@@ -88,6 +88,14 @@
 
     --hover-bg: rgba(139, 92, 246, 0.05);
 
+    --pill-file-bg: #059669;
+    --pill-file-border: #10b981;
+    --pill-file-text: #ffffff;
+    --pill-upload-bg: #ff6b57;
+    --pill-upload-border: #ff7e67;
+    --pill-upload-hover: #e05638;
+    --pill-upload-text: #ffffff;
+
     --btn-primary-bg: var(--accent-primary);
 
     --btn-primary-hover: #7c3aed;
@@ -183,6 +191,14 @@ body.light-mode {
     --border-color-muted: rgba(15, 23, 42, 0.04);
 
     --hover-bg: rgba(124, 58, 237, 0.04);
+
+    --pill-file-bg: #059669;
+    --pill-file-border: #047857;
+    --pill-file-text: #ffffff;
+    --pill-upload-bg: #ff6b57;
+    --pill-upload-border: #e05638;
+    --pill-upload-hover: #e05638;
+    --pill-upload-text: #ffffff;
 
     --btn-primary-bg: var(--accent-primary);
 
@@ -1338,27 +1354,28 @@ body.light-mode .search-container:focus-within {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.5rem 1.2rem;
+    padding: 0.5rem 1.25rem;
     border-radius: var(--radius-full);
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.25s ease;
     animation: slideIn 0.3s ease;
 
-    /* Dark Mode Defaults */
-    background: rgba(16, 185, 129, 0.12) !important;
-    border: 1.5px solid rgba(16, 185, 129, 0.5) !important;
-    color: #34d399 !important;
+    /* Solid Custom Color & White Text */
+    background: var(--pill-file-bg, #059669) !important;
+    border: 1.5px solid var(--pill-file-border, #10b981) !important;
+    color: var(--pill-file-text, #ffffff) !important;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35) !important;
 }
 
 .uploaded-file-pill i.fa-file-csv {
-    color: #34d399 !important;
+    color: var(--pill-file-text, #ffffff) !important;
     font-size: 1rem;
 }
 
 .uploaded-file-pill span {
-    color: #e2e8f0 !important;
-    font-weight: 500;
+    color: var(--pill-file-text, #ffffff) !important;
+    font-weight: 600;
     max-width: 180px;
     white-space: nowrap;
     overflow: hidden;
@@ -1367,78 +1384,88 @@ body.light-mode .search-container:focus-within {
 
 .uploaded-file-pill i.fa-xmark {
     cursor: pointer;
-    color: rgba(16, 185, 129, 0.6) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     margin-left: 0.4rem;
     font-size: 0.9rem;
     transition: color 0.2s, transform 0.2s;
 }
 
 .uploaded-file-pill i.fa-xmark:hover {
-    color: #ef4444 !important;
-    transform: scale(1.15);
+    color: #ffffff !important;
+    transform: scale(1.2);
 }
 
 /* Light Mode Overrides */
 body.light-mode .uploaded-file-pill {
-    background: #ecfdf5 !important;
-    border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
-    color: #047857 !important;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.05) !important;
+    background: var(--pill-file-bg, #059669) !important;
+    border: 1.5px solid var(--pill-file-border, #047857) !important;
+    color: var(--pill-file-text, #ffffff) !important;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25) !important;
 }
 
 body.light-mode .uploaded-file-pill i.fa-file-csv {
-    color: #10b981 !important;
+    color: var(--pill-file-text, #ffffff) !important;
 }
 
 body.light-mode .uploaded-file-pill span {
-    color: #065f46 !important;
+    color: var(--pill-file-text, #ffffff) !important;
 }
 
 body.light-mode .uploaded-file-pill i.fa-xmark {
-    color: rgba(4, 120, 87, 0.6) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 body.light-mode .uploaded-file-pill i.fa-xmark:hover {
-    color: #dc2626 !important;
+    color: #ffffff !important;
 }
 
 /* Upload CSV Button modern styling */
 #uploadCsvBtn {
-    background: rgba(255, 126, 103, 0.12) !important;
-    color: #ffb4a6 !important;
-    border: 1.5px solid rgba(255, 126, 103, 0.45) !important;
+    background: var(--pill-upload-bg, #ff6b57) !important;
+    color: var(--pill-upload-text, #ffffff) !important;
+    border: 1.5px solid var(--pill-upload-border, #ff7e67) !important;
     font-weight: 600 !important;
-    box-shadow: 0 4px 14px rgba(255, 126, 103, 0.1) !important;
+    box-shadow: 0 4px 16px rgba(255, 107, 87, 0.35) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
+#uploadCsvBtn i {
+    color: var(--pill-upload-text, #ffffff) !important;
+}
+
 body.light-mode #uploadCsvBtn {
-    background: #fff0ee !important;
-    color: #e0462b !important;
-    border: 1.5px solid rgba(255, 126, 103, 0.35) !important;
-    box-shadow: 0 4px 14px rgba(255, 126, 103, 0.12) !important;
+    background: var(--pill-upload-bg, #ff6b57) !important;
+    color: var(--pill-upload-text, #ffffff) !important;
+    border: 1.5px solid var(--pill-upload-border, #e05638) !important;
+    box-shadow: 0 4px 16px rgba(255, 107, 87, 0.25) !important;
+}
+
+body.light-mode #uploadCsvBtn i {
+    color: var(--pill-upload-text, #ffffff) !important;
 }
 
 #uploadCsvBtn:hover {
     transform: scale(1.025) !important;
-    background: rgba(255, 126, 103, 0.2) !important;
-    border-color: rgba(255, 126, 103, 0.6) !important;
-    box-shadow: 0 6px 20px rgba(255, 126, 103, 0.2) !important;
+    background: var(--pill-upload-hover, #e05638) !important;
+    border-color: var(--pill-upload-hover, #e05638) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(255, 107, 87, 0.45) !important;
 }
 
 body.light-mode #uploadCsvBtn:hover {
-    background: #ffd5cf !important;
-    border-color: rgba(255, 126, 103, 0.5) !important;
-    box-shadow: 0 6px 20px rgba(255, 126, 103, 0.22) !important;
+    background: var(--pill-upload-hover, #e05638) !important;
+    border-color: #c93b22 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(224, 70, 43, 0.35) !important;
 }
 
 #uploadCsvBtn:active {
     transform: scale(0.985) !important;
-    box-shadow: 0 2px 8px rgba(255, 126, 103, 0.1) !important;
+    box-shadow: 0 2px 8px rgba(255, 107, 87, 0.2) !important;
 }
 
 body.light-mode #uploadCsvBtn:active {
-    box-shadow: 0 2px 8px rgba(255, 126, 103, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(224, 70, 43, 0.2) !important;
 }
 
 @keyframes slideIn {
