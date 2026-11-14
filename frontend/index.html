@@ -609,6 +609,25 @@
         th {
             color: #ffffff !important;
         }
+
+        /* AI ROI Buffer Optimizer Slider - White Styling */
+        #roiBufferSlider {
+            accent-color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        }
+        #roiBufferSlider::-webkit-slider-thumb {
+            background: #ffffff !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8) !important;
+        }
+        #roiBufferSlider::-moz-range-thumb {
+            background: #ffffff !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8) !important;
+            border: none !important;
+        }
+        #roiSliderVal {
+            color: #ffffff !important;
+        }
     </style>
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1356,9 +1375,9 @@
                             <div style="margin-bottom: 1.5rem;">
                                 <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
                                     <span>Procurement Safety Buffer</span>
-                                    <span style="font-weight: 600; color: var(--accent-primary);" id="roiSliderVal">1.4x</span>
+                                    <span style="font-weight: 600; color: #ffffff;" id="roiSliderVal">1.4x</span>
                                 </div>
-                                <input type="range" id="roiBufferSlider" min="1.0" max="2.0" step="0.1" value="1.4" class="roi-slider-track" style="width: 100%; accent-color: var(--accent-primary); cursor: pointer;">
+                                <input type="range" id="roiBufferSlider" min="1.0" max="2.0" step="0.1" value="1.4" class="roi-slider-track" style="width: 100%; accent-color: #ffffff; cursor: pointer;">
                                 <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
                                     <span>Aggressive (1.0x)</span>
                                     <span>Balanced (1.4x)</span>
