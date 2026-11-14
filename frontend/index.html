@@ -152,19 +152,21 @@
             border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
         }
 
-        /* Card 6: Priority Next Step - matches bottom 3 cards style */
+        /* Card 6: Priority Next Step - solid plain black */
         #kpiPriorityNextStepCard {
-            background-color: transparent !important;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px) !important;
-            background-size: 14px 14px !important;
+            background-color: #000000 !important;
+            background: #000000 !important;
+            background-image: none !important;
             border: 2px solid rgba(255, 255, 255, 0.2) !important;
             box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             transition: var(--transition-smooth) !important;
         }
         body.light-mode #kpiPriorityNextStepCard {
-            background-color: transparent !important;
-            background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px) !important;
-            background-size: 14px 14px !important;
+            background-color: #000000 !important;
+            background: #000000 !important;
+            background-image: none !important;
             border: 2px solid rgba(15, 23, 42, 0.25) !important;
             box-shadow: none !important;
         }
@@ -328,11 +330,11 @@
             border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
         }
 
-        /* Transparency overrides for bottom grid cards */
+        /* Solid plain black overrides for bottom grid cards */
         #demandDriversCard, #profitDriversCard, #stockAlertsTimelineCard {
-            background-color: transparent !important;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px) !important;
-            background-size: 14px 14px !important;
+            background-color: #000000 !important;
+            background: #000000 !important;
+            background-image: none !important;
             border: 2px solid rgba(255, 255, 255, 0.2) !important;
             box-shadow: none !important;
             animation: none !important;
@@ -342,9 +344,9 @@
         body.light-mode #demandDriversCard, 
         body.light-mode #profitDriversCard, 
         body.light-mode #stockAlertsTimelineCard {
-            background-color: transparent !important;
-            background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px) !important;
-            background-size: 14px 14px !important;
+            background-color: #000000 !important;
+            background: #000000 !important;
+            background-image: none !important;
             border: 2px solid rgba(15, 23, 42, 0.25) !important;
             box-shadow: none !important;
         }
