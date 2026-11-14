@@ -24,11 +24,11 @@
 
 
 
-    --text-primary: #f8fafc;
+    --text-primary: #ffffff;
 
-    --text-secondary: #94a3b8;
+    --text-secondary: #ffffff;
 
-    --text-muted: #64748b;
+    --text-muted: #ffffff;
 
 
 
@@ -5040,7 +5040,7 @@ input:checked+.slider:before {
 
 .info-tooltip i {
     font-size: 0.7rem;
-    color: #64748b;
+    color: #ffffff;
     transition: color 0.2s ease;
 }
 
@@ -9540,7 +9540,7 @@ body.light-mode .chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
 
 .ai-help-subtitle {
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: #ffffff;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -9582,7 +9582,7 @@ body.light-mode .chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
     border-radius: 8px;
     background: transparent;
     border: none;
-    color: #64748b;
+    color: #ffffff;
     cursor: pointer;
     font-size: 0.85rem;
     display: flex;
@@ -9629,7 +9629,7 @@ body.light-mode .chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
     padding: 0.65rem 0.5rem;
     font-size: 0.8rem;
     font-weight: 500;
-    color: #64748b;
+    color: #ffffff;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
     display: flex;
@@ -9771,7 +9771,7 @@ body.light-mode .chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
     flex-shrink: 0;
     background: #1f1f23;
     border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #94a3b8;
+    color: #ffffff;
     font-size: 0.74rem;
     font-weight: 500;
     padding: 0.4rem 0.8rem;

@@ -596,6 +596,19 @@
             background: #e2e8f0 !important;
             border-color: rgba(30, 41, 59, 0.3) !important;
         }
+
+        /* Global white text overrides for dark mode */
+        :root {
+            --text-primary: #ffffff !important;
+            --text-secondary: #ffffff !important;
+            --text-muted: #ffffff !important;
+        }
+        .inventory-table th,
+        .table-wrapper table th,
+        .table-wrapper th,
+        th {
+            color: #ffffff !important;
+        }
     </style>
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

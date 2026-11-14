@@ -4718,7 +4718,7 @@ function updateChartsForTheme() {
     const isLight = document.body.classList.contains('light-mode');
     
     // Choose colors based on theme
-    const textColor = isLight ? '#475569' : '#94a3b8';
+    const textColor = isLight ? '#475569' : '#ffffff';
     const gridColor = isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(255, 255, 255, 0.05)';
     const tooltipBg = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(13, 13, 13, 0.9)';
     const tooltipText = isLight ? '#0f172a' : '#ffffff';
@@ -5176,7 +5176,7 @@ function initChart() {
     const confidenceLower = [];
 
     // Global chart defaults for dark theme
-    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.color = '#ffffff';
     Chart.defaults.font.family = "'Outfit', sans-serif";
 
     forecastChartInstance = new Chart(ctx, {
@@ -5316,7 +5316,7 @@ function initChart() {
                             drawBorder: false
                         },
                         ticks: {
-                            color: '#94a3b8',
+                            color: '#ffffff',
                             font: {
                                 family: "'Outfit', sans-serif"
                             }
@@ -10277,7 +10277,7 @@ function updateFinancialsUI() {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: '#ffffff',
                             font: { family: "'Outfit', sans-serif", size: 10 },
                             boxWidth: 10
                         }
