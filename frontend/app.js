@@ -6507,52 +6507,56 @@ function renderUnifiedKpiModalRows(items) {
         const reorderPoint = item.reorder_point || 50;
         const price = (item.price && item.price > 0) ? formatCurrency(item.price) : '—';
 
-        // Determine stock status beautifully
+        // Determine stock status with rich, vibrant styling (solid custom pill + white text + matching SKU chip)
         let statusText = 'Healthy';
-        let badgeStyle = 'background: rgba(16, 185, 129, 0.15); color: var(--status-success); border: 1px solid rgba(16, 185, 129, 0.25);';
-        let remainingColor = 'var(--text-primary)';
+        let badgeStyle = 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);';
+        let skuStyle = 'background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); box-shadow: 0 0 8px rgba(16, 185, 129, 0.12);';
+        let remainingColor = '#34d399';
         let rowClass = 'status-leader';
 
         if (left === 0) {
             statusText = 'Out of Stock';
-            badgeStyle = 'background: rgba(239, 68, 68, 0.15); color: var(--status-danger); border: 1px solid rgba(239, 68, 68, 0.25);';
-            remainingColor = 'var(--status-danger)';
+            badgeStyle = 'background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);';
+            skuStyle = 'background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); box-shadow: 0 0 8px rgba(239, 68, 68, 0.12);';
+            remainingColor = '#f87171';
             rowClass = 'status-risk';
         } else if (left <= reorderPoint) {
             statusText = 'Low Stock';
-            badgeStyle = 'background: rgba(245, 158, 11, 0.15); color: var(--status-warning); border: 1px solid rgba(245, 158, 11, 0.25);';
-            remainingColor = 'var(--status-warning)';
+            badgeStyle = 'background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);';
+            skuStyle = 'background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); box-shadow: 0 0 8px rgba(245, 158, 11, 0.12);';
+            remainingColor = '#fbbf24';
             rowClass = 'status-warning';
         } else if (left >= reorderPoint * 3) {
             statusText = 'Overstocked';
-            badgeStyle = 'background: rgba(139, 92, 246, 0.15); color: var(--accent-primary); border: 1px solid rgba(139, 92, 246, 0.25);';
-            remainingColor = 'var(--accent-primary)';
+            badgeStyle = 'background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);';
+            skuStyle = 'background: rgba(139, 92, 246, 0.12); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.35); box-shadow: 0 0 8px rgba(139, 92, 246, 0.12);';
+            remainingColor = '#c084fc';
             rowClass = 'status-healthy';
         }
 
-        const statusBadge = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; display: inline-block; ${badgeStyle}">${statusText}</span>`;
+        const statusBadge = `<span style="font-size: 0.72rem; padding: 4px 11px; border-radius: 9999px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; ${badgeStyle}"><span style="width: 5px; height: 5px; border-radius: 50%; background: #ffffff; box-shadow: 0 0 4px #ffffff;"></span>${statusText}</span>`;
 
         return `
             <tr class="${rowClass}">
                 <td style="text-align: center; font-size: 0.8rem; vertical-align: middle;">
-                    <code style="font-family: monospace; font-size: 0.78rem; color: var(--text-primary); background: rgba(255,255,255,0.06); padding: 3px 7px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.04);">${item.sku}</code>
+                    <code style="font-family: 'SF Mono', 'Fira Code', Menlo, monospace; font-size: 0.78rem; font-weight: 600; padding: 4px 9px; border-radius: 6px; letter-spacing: 0.03em; display: inline-block; ${skuStyle}">${item.sku}</code>
                 </td>
                 <td style="text-align: center; font-size: 0.8rem; vertical-align: middle;">
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:0.15rem;">
-                        <span style="font-weight: 500; color: var(--text-primary);">${item.name}</span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">${item.category || 'N/A'}</span>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
+                        <span style="font-weight: 600; color: #ffffff; font-size: 0.84rem;">${item.name}</span>
+                        <span style="font-size: 0.72rem; color: #94a3b8; background: rgba(255,255,255,0.05); padding: 1px 7px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.06);">${item.category || 'N/A'}</span>
                     </div>
                 </td>
-                <td style="text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--text-primary); vertical-align: middle;">
+                <td style="text-align: center; font-size: 0.84rem; font-weight: 600; color: #ffffff; vertical-align: middle;">
                     ${total.toLocaleString()}
                 </td>
-                <td style="text-align: center; font-size: 0.8rem; font-weight: 600; color: ${remainingColor}; vertical-align: middle;">
+                <td style="text-align: center; font-size: 0.84rem; font-weight: 700; color: ${remainingColor}; vertical-align: middle;">
                     ${left.toLocaleString()}
                 </td>
-                <td style="text-align: center; font-size: 0.8rem; color: var(--text-secondary); vertical-align: middle;">
+                <td style="text-align: center; font-size: 0.82rem; color: #94a3b8; vertical-align: middle;">
                     ${sold.toLocaleString()}
                 </td>
-                <td style="text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--accent-primary); vertical-align: middle;">
+                <td style="text-align: center; font-size: 0.84rem; font-weight: 600; color: #a78bfa; vertical-align: middle;">
                     ${price}
                 </td>
                 <td style="text-align: center; font-size: 0.8rem; vertical-align: middle;">

@@ -50,9 +50,9 @@
 
 
 
-    --status-danger: #ef4444;
+    --status-danger: #e82f2f;
 
-    --status-danger-bg: rgba(239, 68, 68, 0.15);
+    --status-danger-bg: rgba(247, 56, 56, 0.393);
 
 
 
@@ -13497,53 +13497,62 @@ body.light-mode #kpiUnifiedCard .kpi-unified-header {
     border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 
-/* Colorful status-based table row tints */
-.sku-table tbody tr.status-leader {
-    background: #0d281e !important;
+/* Sleek, vibrant modern table row styling (eliminates muddy washes, adds crisp vivid accents) */
+.sku-table tbody tr {
+    background: rgba(255, 255, 255, 0.015);
+    transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s ease;
 }
 
-.sku-table tbody tr.status-leader td {
-    border-bottom: 1px solid rgba(16, 185, 129, 0.25) !important;
+.sku-table tbody tr td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.sku-table tbody tr.status-leader {
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.09) 0%, rgba(16, 185, 129, 0.02) 25%, transparent 70%) !important;
+}
+
+.sku-table tbody tr.status-leader td:first-child {
+    border-left: 4px solid #10b981 !important;
 }
 
 .sku-table tbody tr.status-leader:hover {
-    background: #123528 !important;
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.04) 40%, rgba(255, 255, 255, 0.03) 100%) !important;
 }
 
 .sku-table tbody tr.status-risk {
-    background: #2b1313 !important;
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.10) 0%, rgba(239, 68, 68, 0.02) 25%, transparent 70%) !important;
 }
 
-.sku-table tbody tr.status-risk td {
-    border-bottom: 1px solid rgba(239, 68, 68, 0.25) !important;
+.sku-table tbody tr.status-risk td:first-child {
+    border-left: 4px solid #ef4444 !important;
 }
 
 .sku-table tbody tr.status-risk:hover {
-    background: #3c1e1e !important;
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.18) 0%, rgba(239, 68, 68, 0.04) 40%, rgba(255, 255, 255, 0.03) 100%) !important;
 }
 
 .sku-table tbody tr.status-warning {
-    background: #2c1a0c !important;
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.09) 0%, rgba(245, 158, 11, 0.02) 25%, transparent 70%) !important;
 }
 
-.sku-table tbody tr.status-warning td {
-    border-bottom: 1px solid rgba(245, 158, 11, 0.25) !important;
+.sku-table tbody tr.status-warning td:first-child {
+    border-left: 4px solid #f59e0b !important;
 }
 
 .sku-table tbody tr.status-warning:hover {
-    background: #3c2612 !important;
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.04) 40%, rgba(255, 255, 255, 0.03) 100%) !important;
 }
 
 .sku-table tbody tr.status-healthy {
-    background: #0d1e36 !important;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.09) 0%, rgba(139, 92, 246, 0.02) 25%, transparent 70%) !important;
 }
 
-.sku-table tbody tr.status-healthy td {
-    border-bottom: 1px solid rgba(59, 130, 246, 0.2) !important;
+.sku-table tbody tr.status-healthy td:first-child {
+    border-left: 4px solid #8b5cf6 !important;
 }
 
 .sku-table tbody tr.status-healthy:hover {
-    background: #142847 !important;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.16) 0%, rgba(139, 92, 246, 0.04) 40%, rgba(255, 255, 255, 0.03) 100%) !important;
 }
 
 /* Light mode overrides for table row tints (solid pastel themes for high visibility) */
