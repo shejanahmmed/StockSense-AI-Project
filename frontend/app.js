@@ -651,6 +651,97 @@ function setupNavigation() {
         });
     }
 
+    // Interactive Platform Capabilities Cards (3D tilt, spotlight, ripple & launch actions)
+    function initFeatureCardsInteractivity() {
+        const featureCards = document.querySelectorAll('.feature-card');
+        if (!featureCards.length) return;
+
+        featureCards.forEach((card) => {
+            // Dynamic 3D tilt & mouse spotlight
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                card.style.setProperty('--x', `${x}px`);
+                card.style.setProperty('--y', `${y}px`);
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -5;
+                const rotateY = ((x - centerX) / centerX) * 5;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-5px) scale3d(1.015, 1.015, 1.015)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale3d(1, 1, 1)';
+            });
+
+            // Click interaction with ripple effect & deep-linking
+            card.addEventListener('click', (e) => {
+                const rect = card.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.className = 'feature-card-ripple';
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+                ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+                card.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+
+                const feature = card.getAttribute('data-feature');
+                switch (feature) {
+                    case 'forecast':
+                        showToast('📈 Navigating to Demand & Holiday Forecasts...', 'info');
+                        switchView('dashboard');
+                        setTimeout(() => {
+                            const target = document.getElementById('dailyDemandForecast') || document.getElementById('forecastChart');
+                            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 350);
+                        break;
+                    case 'database':
+                        showToast('🛡️ Accessing SQLite Data Sovereignty & Settings...', 'info');
+                        switchView('settings');
+                        setTimeout(() => {
+                            const target = document.querySelector('.data-management-card') || document.querySelector('.settings-section');
+                            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 350);
+                        break;
+                    case 'assistant':
+                        showToast('🧠 Connecting to AI Strategic Assistant...', 'info');
+                        switchView('insights');
+                        break;
+                    case 'campaign':
+                        showToast('🎯 Loading Campaign & Promo Optimizer...', 'info');
+                        switchView('dashboard');
+                        setTimeout(() => {
+                            const promoSec = document.getElementById('promo-planner-section');
+                            if (promoSec) promoSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 350);
+                        break;
+                    case 'multicurrency':
+                        showToast('💱 Accessing Live Multicurrency & Financials...', 'info');
+                        switchView('financials');
+                        break;
+                    case 'csv':
+                        showToast('📂 Opening CSV Ingestion Pipeline...', 'info');
+                        switchView('dashboard');
+                        setTimeout(() => {
+                            const fileInput = document.getElementById('csvFileInput');
+                            if (fileInput) fileInput.click();
+                        }, 350);
+                        break;
+                    default:
+                        showToast('✨ Feature active & synchronized', 'info');
+                        break;
+                }
+            });
+        });
+    }
+
+    initFeatureCardsInteractivity();
+
     // Wire up How It Works view triggers
     const footerNavHowItWorks = document.getElementById('footerNavHowItWorks');
     if (footerNavHowItWorks) {
