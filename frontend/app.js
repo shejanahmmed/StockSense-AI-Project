@@ -132,6 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 14. Initialize Drag-to-Scroll swipe behavior for AI Promotional Planner Suggestions deck
     initPromoDragToScroll();
 
+    // 15. Initialize AI ROI Buffer Slider track & projections
+    if (typeof simulateROI === 'function') {
+        simulateROI();
+    }
+
 
     // 10. If no CSV has been uploaded, show a clean empty state
     //     Otherwise, fetchDefaultInsight is skipped — cached data is restored in setupCsvUpload
@@ -4785,6 +4790,9 @@ function updateChartsForTheme() {
     updateChartColors(drawerChartInstance);
     updateChartColors(financialsCategoryChartInstance);
     updateChartColors(financialsSpendChartInstance);
+    if (typeof simulateROI === 'function') {
+        simulateROI();
+    }
 }
 
 function addNotification(title, message, type = 'info') {
@@ -10364,24 +10372,49 @@ function updateFinancialsUI() {
     const slider = document.getElementById('roiBufferSlider');
     if (slider && !slider.dataset.bound) {
         slider.addEventListener('input', simulateROI);
+        slider.addEventListener('change', simulateROI);
         slider.dataset.bound = "true";
     }
     
     simulateROI();
 }
 
+function updateRoiSliderFill(slider) {
+    if (!slider) slider = document.getElementById('roiBufferSlider');
+    if (!slider) return;
+    const min = !isNaN(parseFloat(slider.min)) ? parseFloat(slider.min) : 1.0;
+    const max = !isNaN(parseFloat(slider.max)) ? parseFloat(slider.max) : 2.0;
+    const val = !isNaN(parseFloat(slider.value)) ? parseFloat(slider.value) : 1.4;
+    const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+    const isLight = document.body && document.body.classList.contains('light-mode');
+    
+    // In dark mode: white track fill till pointer, remaining part transparent
+    // In light mode: purple accent fill till pointer, soft transparent track after
+    const fillColor = isLight ? '#7c3aed' : '#ffffff';
+    const emptyColor = isLight ? 'rgba(15, 23, 42, 0.1)' : 'transparent';
+    
+    slider.style.setProperty('--roi-slider-fill', `${pct}%`);
+    slider.style.setProperty('background', `linear-gradient(to right, ${fillColor} 0%, ${fillColor} ${pct}%, ${emptyColor} ${pct}%, ${emptyColor} 100%)`, 'important');
+}
+
 function simulateROI() {
     const slider = document.getElementById('roiBufferSlider');
     if (!slider) return;
     
-    const M = parseFloat(slider.value);
+    const M = !isNaN(parseFloat(slider.value)) ? parseFloat(slider.value) : 1.4;
     const sliderVal = document.getElementById('roiSliderVal');
     if (sliderVal) sliderVal.innerText = M.toFixed(1) + 'x';
     
-    if (!_financialsCache || !_financialsCache.kpis) return;
+    // Always update slider track fill in real-time while pointer is moving
+    updateRoiSliderFill(slider);
     
-    const baseRisk = _financialsCache.kpis.revenue_at_risk;
-    const baseCapital = _financialsCache.kpis.capital_tied_up;
+    // Baseline KPIs from cache or robust fallbacks in case cache is loading or in demo mode
+    const baseRisk = (_financialsCache && _financialsCache.kpis && typeof _financialsCache.kpis.revenue_at_risk === 'number')
+        ? _financialsCache.kpis.revenue_at_risk
+        : 8909088;
+    const baseCapital = (_financialsCache && _financialsCache.kpis && typeof _financialsCache.kpis.capital_tied_up === 'number')
+        ? _financialsCache.kpis.capital_tied_up
+        : 11007491.78;
     
     let additionalCapital = 0;
     if (M > 1.4) {

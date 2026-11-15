@@ -10148,10 +10148,28 @@ body.light-mode .ai-help-input:focus {
     outline: none;
     border-radius: var(--radius-full);
     height: 6px;
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(to right, #ffffff 0%, #ffffff var(--roi-slider-fill, 40%), transparent var(--roi-slider-fill, 40%), transparent 100%);
     border: 1px solid rgba(255, 255, 255, 0.35);
     accent-color: #ffffff;
-    transition: background 0.3s;
+    cursor: pointer;
+}
+
+#roiBufferSlider::-webkit-slider-runnable-track {
+    background: transparent;
+    height: 6px;
+    border: none;
+}
+
+#roiBufferSlider::-moz-range-track {
+    background: transparent;
+    height: 6px;
+    border: none;
+}
+
+#roiBufferSlider::-moz-range-progress {
+    background: #ffffff;
+    height: 6px;
+    border-radius: var(--radius-full);
 }
 
 #roiBufferSlider::-webkit-slider-thumb {
@@ -10163,7 +10181,8 @@ body.light-mode .ai-help-input:focus {
     background: #ffffff;
     cursor: pointer;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: -5px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 #roiBufferSlider::-webkit-slider-thumb:hover {
@@ -10178,7 +10197,7 @@ body.light-mode .ai-help-input:focus {
     background: #ffffff;
     cursor: pointer;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
     border: none;
 }
 
@@ -10190,26 +10209,24 @@ body.light-mode .ai-help-input:focus {
 
 /* ── Light mode overrides — ROI buffer slider ────────────────────────────── */
 body.light-mode #roiBufferSlider {
-    background: linear-gradient(to right, #8b5cf6 40%, #dde2ef 40%) !important;
+    background: linear-gradient(to right, #7c3aed 0%, #7c3aed var(--roi-slider-fill, 40%), rgba(15, 23, 42, 0.1) var(--roi-slider-fill, 40%), rgba(15, 23, 42, 0.1) 100%) !important;
     border: 1.5px solid rgba(99, 102, 241, 0.35) !important;
 }
 
 body.light-mode #roiBufferSlider::-webkit-slider-runnable-track {
-    background: #e2e8f0;
-    border-radius: var(--radius-full);
+    background: transparent !important;
     height: 6px;
-    border: 1.5px solid rgba(99, 102, 241, 0.3);
+    border: none !important;
 }
 
 body.light-mode #roiBufferSlider::-moz-range-track {
-    background: #e2e8f0;
-    border-radius: var(--radius-full);
+    background: transparent !important;
     height: 6px;
-    border: 1.5px solid rgba(99, 102, 241, 0.3);
+    border: none !important;
 }
 
 body.light-mode #roiBufferSlider::-moz-range-progress {
-    background: #8b5cf6;
+    background: #7c3aed !important;
     border-radius: var(--radius-full);
     height: 6px;
 }
@@ -10218,6 +10235,7 @@ body.light-mode #roiBufferSlider::-webkit-slider-thumb {
     background: #7c3aed;
     box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2), 0 2px 8px rgba(124, 58, 237, 0.4);
     border: 2px solid #ffffff;
+    margin-top: -5px;
 }
 
 body.light-mode #roiBufferSlider::-webkit-slider-thumb:hover {
