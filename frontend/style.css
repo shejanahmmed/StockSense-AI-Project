@@ -13270,6 +13270,50 @@ body.light-mode #kpiMarginCard {
     border: 1.5px solid rgba(15, 23, 42, 0.06) !important;
 }
 
+/* Black stroke for text inside Business Intelligence cards */
+#kpiDailyVsForecastCard,
+#kpiCashFlowCard,
+#kpiDemandTrendCard,
+#kpiNextEventCard,
+#kpiMarginCard,
+#kpiDailyVsForecastCard .kpi-label,
+#kpiCashFlowCard .kpi-label,
+#kpiDemandTrendCard .kpi-label,
+#kpiNextEventCard .kpi-label,
+#kpiMarginCard .kpi-label,
+#kpiDailyVsForecastCard .kpi-value,
+#kpiCashFlowCard .kpi-value,
+#kpiDemandTrendCard .kpi-value,
+#kpiNextEventCard .kpi-value,
+#kpiMarginCard .kpi-value,
+#kpiDailyVsForecastCard .trend,
+#kpiCashFlowCard .trend,
+#kpiDemandTrendCard .trend,
+#kpiNextEventCard .trend,
+#kpiMarginCard .trend,
+#kpiDailyVsForecastCard span,
+#kpiCashFlowCard span,
+#kpiDemandTrendCard span,
+#kpiNextEventCard span,
+#kpiMarginCard span,
+#kpiDailyVsForecastCard h3,
+#kpiCashFlowCard h3,
+#kpiDemandTrendCard h3,
+#kpiNextEventCard h3,
+#kpiMarginCard h3 {
+    -webkit-text-stroke: 0.5px #000000;
+    paint-order: stroke fill;
+}
+
+#kpiDailyVsForecastCard .tooltip-text,
+#kpiCashFlowCard .tooltip-text,
+#kpiDemandTrendCard .tooltip-text,
+#kpiNextEventCard .tooltip-text,
+#kpiMarginCard .tooltip-text {
+    -webkit-text-stroke: 0px transparent !important;
+    paint-order: normal !important;
+}
+
 /* Card 6: Priority Next Step - Solid Black */
 #kpiPriorityNextStepCard {
     background: #000000 !important;
