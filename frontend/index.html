@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=15">
     <script>
         window.handleIconError = function (img) {
             img.style.display = 'none';
@@ -1304,6 +1304,10 @@
                                 Demand Forecast
                             </h2>
                             <div class="chart-header-controls" style="display: none;">
+                                <button type="button" id="btnOpenAccuracyScorecard" class="secondary-btn" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; height: 32px; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); color: var(--status-success); cursor: pointer;" title="View Closed-Loop Forecast Accuracy Audit & Model Scorecard">
+                                    <i class="fa-solid fa-award"></i>
+                                    <span>Accuracy: <strong id="dashboardAccuracyPill">--%</strong></span>
+                                </button>
                                 <div class="chart-legend-custom">
                                     <span><span class="legend-dot historical"></span> Historical</span>
                                     <span><span class="legend-dot forecast"></span> Predicted</span>
@@ -2083,7 +2087,7 @@
                                     <th class="sortable-header" data-sort="stock" style="white-space: nowrap;">Stock <i
                                             class="fa-solid fa-sort"></i></th>
                                     <th class="sortable-header" data-sort="reorder_point" style="white-space: nowrap;">
-                                        Reorder Pt. <i class="fa-solid fa-sort"></i></th>
+                                        Reorder Pt. (ROP) <i class="fa-solid fa-sort"></i></th>
                                     <th class="sortable-header" data-sort="supplier_lead_days"
                                         style="white-space: nowrap;">Lead Days <i class="fa-solid fa-sort"></i></th>
                                     <th class="sortable-header" data-sort="forecasted_demand"
@@ -2565,6 +2569,42 @@
                     <!-- === AI ENGINE TAB === -->
                     <div class="settings-panel" id="settings-panel-ai">
                         <div class="settings-panel-grid">
+
+                            <div class="settings-section-card glass-panel">
+                                <div class="settings-section-header">
+                                    <div class="settings-section-icon"
+                                        style="background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(59,130,246,0.15)); border-color: rgba(16,185,129,0.35);">
+                                        <i class="fa-solid fa-shield-halved" style="color: var(--status-success);"></i>
+                                    </div>
+                                    <div>
+                                        <h3>Target Service Level & Safety Buffer</h3>
+                                        <p class="settings-section-desc">Determines safety stock buffer aggression and cycle stockout tolerance across inventory.</p>
+                                    </div>
+                                </div>
+                                <div class="service-level-segmented-group" id="serviceLevelGroup" style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                                    <button type="button" class="service-level-btn" data-level="0.90" onclick="window.selectServiceLevel && window.selectServiceLevel('0.90', this)" style="flex: 1; min-width: 110px; padding: 0.75rem 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-secondary); cursor: pointer; text-align: center; transition: all 0.2s;">
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">90%</div>
+                                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Lean Buffer (Z=1.28)</div>
+                                    </button>
+                                    <button type="button" class="service-level-btn active" data-level="0.95" onclick="window.selectServiceLevel && window.selectServiceLevel('0.95', this)" style="flex: 1; min-width: 110px; padding: 0.75rem 0.5rem; border-radius: 8px; border: 1px solid var(--accent-primary); background: rgba(139,92,246,0.18); color: #fff; cursor: pointer; text-align: center; transition: all 0.2s;">
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">95%</div>
+                                        <div style="font-size: 0.72rem; color: var(--accent-primary); margin-top: 0.2rem;">Standard (Z=1.65)</div>
+                                    </button>
+                                    <button type="button" class="service-level-btn" data-level="0.98" onclick="window.selectServiceLevel && window.selectServiceLevel('0.98', this)" style="flex: 1; min-width: 110px; padding: 0.75rem 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-secondary); cursor: pointer; text-align: center; transition: all 0.2s;">
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">98%</div>
+                                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">High Buffer (Z=2.05)</div>
+                                    </button>
+                                    <button type="button" class="service-level-btn" data-level="0.99" onclick="window.selectServiceLevel && window.selectServiceLevel('0.99', this)" style="flex: 1; min-width: 110px; padding: 0.75rem 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-secondary); cursor: pointer; text-align: center; transition: all 0.2s;">
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">99%</div>
+                                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Ultra Secure (Z=2.33)</div>
+                                    </button>
+                                </div>
+                                <input type="hidden" id="settingServiceLevel" value="0.95">
+                                <p class="settings-field-hint" style="margin-top: 0.75rem; font-size: 0.78rem; color: var(--text-muted);">
+                                    <i class="fa-solid fa-circle-info" style="color: var(--accent-primary); margin-right: 0.3rem;"></i>
+                                    Safety Stock calculation formula: <code>SS = ⌈Z × √(Lead Time) × σ_demand⌉</code>. Higher service levels prevent stockouts during demand spikes but require more working capital.
+                                </p>
+                            </div>
 
                             <div class="settings-section-card glass-panel">
                                 <div class="settings-section-header">
@@ -4781,11 +4821,16 @@
                 style="padding: 1.5rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1.5rem; max-height: calc(100vh - 180px);">
                 <!-- Mini-Chart Container -->
                 <div class="drawer-section">
-                    <h3 class="drawer-section-title"
-                        style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-                        <i class="fa-solid fa-chart-line"
-                            style="color: var(--accent-primary); margin-right: 0.35rem;"></i> AI Demand Forecast
-                    </h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 class="drawer-section-title"
+                            style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin: 0;">
+                            <i class="fa-solid fa-chart-line"
+                                style="color: var(--accent-primary); margin-right: 0.35rem;"></i> AI Demand Forecast
+                        </h3>
+                        <span class="badge" id="drawerAccuracyBadge" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; background: rgba(16,185,129,0.15); color: var(--status-success); border: 1px solid rgba(16,185,129,0.3);">
+                            <i class="fa-solid fa-check-double"></i> <span id="drawerAccuracyVal">--%</span> Acc.
+                        </span>
+                    </div>
                     <div class="drawer-chart-wrapper"
                         style="position: relative; width: 100%; height: 180px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 0.5rem; box-sizing: border-box;">
                         <canvas id="drawerForecastChart"></canvas>
@@ -4824,6 +4869,45 @@
                                 Time</span>
                             <span class="stat-value text-info" id="drawerLeadTime"
                                 style="font-size: 1.15rem; font-weight: 700; color: var(--status-info);">0d</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic ROP Decomposition -->
+                    <div class="drawer-rop-breakdown" style="margin-top: 0.75rem; padding: 0.85rem; background: rgba(139,92,246,0.05); border: 1px solid rgba(139,92,246,0.15); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent-primary); letter-spacing: 0.04em;">
+                                <i class="fa-solid fa-calculator" style="margin-right: 0.3rem;"></i> ROP Decomposition
+                            </span>
+                            <span class="badge" id="drawerRopBadge" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; background: rgba(139,92,246,0.2); color: var(--accent-primary); border: 1px solid rgba(139,92,246,0.4);">Auto AI</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem;">
+                            <div style="background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 6px;">
+                                <div style="color: var(--text-muted); font-size: 0.7rem;">Cycle Demand (d × L)</div>
+                                <div style="font-weight: 700; color: #fff; font-size: 0.95rem; margin-top: 0.15rem;" id="drawerCycleDemand">0 units</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 6px;">
+                                <div style="color: var(--text-muted); font-size: 0.7rem;">Safety Stock Buffer</div>
+                                <div style="font-weight: 700; color: var(--status-success); font-size: 0.95rem; margin-top: 0.15rem;" id="drawerSafetyStock">0 units</div>
+                            </div>
+                        </div>
+
+                        <!-- Policy Mode Toggle & Manual Override -->
+                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06);">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">Policy Mode:</span>
+                                <div class="rop-mode-toggle" style="display: inline-flex; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; overflow: hidden;">
+                                    <button type="button" id="btnModeAuto" class="rop-mode-btn active" style="padding: 0.25rem 0.6rem; font-size: 0.72rem; border: none; background: var(--accent-primary); color: #fff; cursor: pointer; transition: all 0.2s;">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto AI
+                                    </button>
+                                    <button type="button" id="btnModeManual" class="rop-mode-btn" style="padding: 0.25rem 0.6rem; font-size: 0.72rem; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;">
+                                        <i class="fa-solid fa-user-pen"></i> Manual
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="drawerManualRopContainer" style="display: none; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                                <input type="number" id="drawerManualRopInput" class="settings-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100px; margin: 0;" min="1" placeholder="Manual ROP">
+                                <button type="button" id="drawerSaveManualRopBtn" class="primary-btn" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; height: auto;">Save ROP</button>
+                            </div>
                         </div>
                     </div>
                     <!-- Status Card -->
@@ -4927,6 +5011,8 @@
                                         <th>Product Name</th>
                                         <th style="text-align: center; white-space: nowrap;">Current Stock</th>
                                         <th style="text-align: center; white-space: nowrap;">Proj. Demand</th>
+                                        <th style="text-align: center; white-space: nowrap;">Eff. ROP</th>
+                                        <th style="text-align: center; white-space: nowrap;">Safety Stock</th>
                                         <th
                                             style="text-align: center; color: var(--accent-primary); white-space: nowrap;">
                                             Reorder Qty</th>
@@ -4939,7 +5025,7 @@
                                 </tbody>
                                 <tfoot>
                                     <tr class="po-tfoot-row">
-                                        <td colspan="6"
+                                        <td colspan="8"
                                             style="text-align: right; font-weight: 700; color: var(--text-secondary); padding: 0.65rem 0.5rem; white-space: nowrap; font-size: 0.82rem;">
                                             Grand Total:</td>
                                         <td id="poGrandTotal"
@@ -4994,6 +5080,85 @@
         </div>
     </div>
 
+    <!-- Closed-Loop Forecast Accuracy Audit & Model Reliability Scorecard Modal -->
+    <div class="sku-modal-overlay" id="accuracyScorecardModal" style="pointer-events: none; display: none;">
+        <div class="sku-modal-container" style="width: 1200px; max-width: 95vw; height: 85vh; max-height: 90vh; display: flex; flex-direction: column; border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 35px rgba(16, 185, 129, 0.15);">
+            <div class="sku-modal-header" style="padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); display: flex; align-items: center; justify-content: center; color: var(--status-success); font-size: 1.25rem;">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #fff;">Model Reliability Scorecard &amp; Forecast Audit</h2>
+                        <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Empirical backtesting audit comparing Prophet predictive models against observed retail demand.</p>
+                    </div>
+                </div>
+                <button class="sku-modal-close" id="closeAccuracyScorecardModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Scorecard Summary KPIs -->
+            <div style="padding: 1.25rem 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
+                <div style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">Overall Accuracy</span>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: var(--status-success); margin-top: 0.25rem;" id="scorecardOverallAccuracy">--%</div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">100% - Weighted Abs Error</span>
+                </div>
+                <div style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">System WAPE</span>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: var(--accent-primary); margin-top: 0.25rem;" id="scorecardOverallWape">--%</div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">Weighted Abs % Error</span>
+                </div>
+                <div style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">Tracking Bias</span>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: #fff; margin-top: 0.25rem;" id="scorecardOverallBias">--%</div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);" id="scorecardBiasDirection">Balanced Calibration</span>
+                </div>
+                <div style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">Reliability Health</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;">
+                        <span class="badge" id="scorecardHighCount" style="background: rgba(16,185,129,0.2); color: var(--status-success); border: 1px solid rgba(16,185,129,0.3); font-size: 0.75rem;">-- High</span>
+                        <span class="badge" id="scorecardModCount" style="background: rgba(245,158,11,0.2); color: var(--status-warning); border: 1px solid rgba(245,158,11,0.3); font-size: 0.75rem;">-- Mod</span>
+                    </div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">Evaluated across all SKUs</span>
+                </div>
+            </div>
+
+            <!-- Scorecard Table Controls & Filter -->
+            <div style="padding: 1rem 1.5rem 0.5rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                <div style="position: relative; flex: 1; max-width: 320px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem;"></i>
+                    <input type="text" id="scorecardSearchInput" class="settings-input" style="padding-left: 2.2rem; margin: 0; font-size: 0.82rem;" placeholder="Search SKU or Product...">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="scorecard-filter-btn active" data-filter="all" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--accent-primary); background: rgba(139,92,246,0.15); color: #fff; cursor: pointer;">All Tiers</button>
+                    <button type="button" class="scorecard-filter-btn" data-filter="High Reliability" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-muted); cursor: pointer;">High Reliability</button>
+                    <button type="button" class="scorecard-filter-btn" data-filter="Moderate Drift" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-muted); cursor: pointer;">Moderate Drift</button>
+                    <button type="button" class="scorecard-filter-btn" data-filter="Low Confidence" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-muted); cursor: pointer;">Low Confidence</button>
+                </div>
+            </div>
+
+            <!-- Scorecard Breakdown Table -->
+            <div style="flex: 1; overflow-y: auto; padding: 0.75rem 1.5rem 1.5rem 1.5rem;">
+                <table class="inventory-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="white-space: nowrap;">SKU Code</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th style="text-align: center; white-space: nowrap;">Accuracy</th>
+                            <th style="text-align: center; white-space: nowrap;">WAPE Error</th>
+                            <th style="text-align: center; white-space: nowrap;">Tracking Bias</th>
+                            <th style="text-align: center; white-space: nowrap;">Reliability Tier</th>
+                            <th>Diagnostic &amp; Action Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scorecardTableBody">
+                        <!-- Dynamic SKU Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <!-- CSV Staging & Validation Modal -->
     <div id="csvValidationModal" class="modal-backdrop-overlay" style="display: none;">
         <div class="staging-modal-card glass-panel animated fade-in">
@@ -5120,7 +5285,7 @@
 
     <!-- html2pdf Library for premium PO document exports -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=15"></script>
 </body>
 
 </html>

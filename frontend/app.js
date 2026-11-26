@@ -1194,6 +1194,13 @@ function renderInventoryTable(data, page = 1) {
         
         const forecastDemand = item.forecasted_demand !== undefined ? item.forecasted_demand : '—';
         const reorderPt = item.reorder_point !== undefined ? item.reorder_point : '—';
+        const isAutoRop = (item.rop_mode || 'auto') === 'auto';
+        const ropBadgeIcon = isAutoRop ? 'fa-wand-magic-sparkles' : 'fa-user-pen';
+        const ropBadgeTitle = isAutoRop 
+            ? `Dynamic ROP (SS: ${item.safety_stock || 0})` 
+            : 'Manual Override ROP';
+        const ropBadgeClass = isAutoRop ? 'rop-pill-auto' : 'rop-pill-manual';
+
         const leadDays = item.supplier_lead_days !== undefined ? item.supplier_lead_days : '—';
         const price = (item.price && item.price > 0) ? formatCurrency(item.price) : '—';
 
@@ -1224,7 +1231,14 @@ function renderInventoryTable(data, page = 1) {
                     <span style="color: var(--text-muted); font-size: 0.75rem;">units</span>
                 </div>
             </td>
-            <td style="color: var(--text-secondary);">${reorderPt}</td>
+            <td style="color: var(--text-secondary);">
+                <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <span style="font-weight: 600;">${reorderPt}</span>
+                    <span class="rop-indicator-badge ${ropBadgeClass}" title="${ropBadgeTitle}" style="font-size: 0.68rem; padding: 1px 5px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px;">
+                        <i class="fa-solid ${ropBadgeIcon}"></i>
+                    </span>
+                </div>
+            </td>
             <td style="color: var(--text-secondary);">${leadDays}d</td>
             <td style="color: var(--accent-primary); font-weight: 600;">${forecastDemand !== '—' ? forecastDemand + ' units' : '—'}</td>
             <td style="white-space: nowrap;"><span class="status-pill ${statusClass}">${item.status}</span></td>
@@ -5755,6 +5769,52 @@ function initUserProfile() {
     if (regionInput) regionInput.value = localStorage.getItem('stockSense_cfgRegion') || 'BD';
     if (currencyInput) currencyInput.value = localStorage.getItem('stockSense_cfgCurrency') || 'BDT';
     
+    // Initialize Service Level Target buttons
+    const serviceLevelGroup = document.getElementById('serviceLevelGroup');
+    const serviceLevelInput = document.getElementById('settingServiceLevel');
+    const savedServiceLevel = localStorage.getItem('stockSense_serviceLevel') || '0.95';
+    if (serviceLevelInput) serviceLevelInput.value = savedServiceLevel;
+
+    window.selectServiceLevel = function(lvl, clickedEl) {
+        const group = document.getElementById('serviceLevelGroup');
+        const input = document.getElementById('settingServiceLevel');
+        if (input) input.value = lvl;
+        localStorage.setItem('stockSense_serviceLevel', lvl);
+
+        if (group) {
+            const allBtns = group.querySelectorAll('.service-level-btn');
+            allBtns.forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = 'rgba(255,255,255,0.1)';
+                b.style.background = 'rgba(255,255,255,0.03)';
+                b.style.color = 'var(--text-secondary)';
+                const sub = b.querySelector('div:last-child');
+                if (sub) sub.style.color = 'var(--text-muted)';
+            });
+        }
+
+        const targetBtn = clickedEl || group?.querySelector(`[data-level="${lvl}"]`);
+        if (targetBtn) {
+            targetBtn.classList.add('active');
+            targetBtn.style.borderColor = 'var(--accent-primary)';
+            targetBtn.style.background = 'rgba(139,92,246,0.18)';
+            targetBtn.style.color = '#fff';
+            const sub = targetBtn.querySelector('div:last-child');
+            if (sub) sub.style.color = 'var(--accent-primary)';
+        }
+    };
+
+    if (serviceLevelGroup) {
+        window.selectServiceLevel(savedServiceLevel);
+        const btns = serviceLevelGroup.querySelectorAll('.service-level-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const lvl = btn.getAttribute('data-level');
+                window.selectServiceLevel(lvl, btn);
+            });
+        });
+    }
+
     // Tab switching logic for settings panels
     const settingsTabs = document.querySelectorAll('.settings-tab');
     const settingsPanels = document.querySelectorAll('.settings-panel');
@@ -6088,6 +6148,22 @@ function initUserProfile() {
                 const newDl = dlInput ? dlInput.checked : true;
                 const newRegion = regionInput ? regionInput.value : 'BD';
                 const newCurrency = currencyInput ? currencyInput.value : 'BDT';
+                const serviceLevelVal = parseFloat(document.getElementById('settingServiceLevel')?.value || '0.95');
+
+                // Save Service Level Target to backend
+                try {
+                    await fetch('/api/user/service-level', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ service_level_target: serviceLevelVal })
+                    });
+                    localStorage.setItem('stockSense_serviceLevel', serviceLevelVal.toString());
+                } catch (err) {
+                    console.warn("Could not save service level target:", err);
+                }
 
                 // Update Session
                 localStorage.setItem('stockSense_storeName', newName);
@@ -9863,6 +9939,8 @@ async function openDraftPO(skuOrSkus, name, stock) {
                     <td style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary);">${data.name}</td>
                     <td style="font-size: 0.82rem; text-align: center; white-space: nowrap;">${data.current_stock.toLocaleString()}</td>
                     <td style="font-size: 0.82rem; text-align: center; white-space: nowrap;">${data.forecasted_demand.toLocaleString()}</td>
+                    <td style="font-size: 0.82rem; text-align: center; white-space: nowrap; color: var(--accent-primary); font-weight: 600;">${data.reorder_point || 50}</td>
+                    <td style="font-size: 0.82rem; text-align: center; white-space: nowrap; color: var(--status-success); font-weight: 600;">+${data.safety_stock || 0}</td>
                     <td style="text-align: center; white-space: nowrap;">
                         <input type="number" class="po-item-qty-input settings-input" style="width: 68px; padding: 0.25rem 0.4rem; text-align: center; font-weight: 700; background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.4); margin: 0; display: inline-block; font-size: 0.8rem;" value="${data.recommended_qty}" min="0">
                     </td>
@@ -9985,6 +10063,149 @@ async function openTelemetryDrawer(item) {
     document.getElementById('drawerStock').textContent = item.stock.toLocaleString();
     document.getElementById('drawerReorderPt').textContent = item.reorder_point !== undefined ? item.reorder_point : '50';
     document.getElementById('drawerLeadTime').textContent = `${item.supplier_lead_days || 7}d`;
+
+    // Populate ROP Decomposition & Policy Mode
+    const effectiveRop = item.reorder_point !== undefined ? item.reorder_point : 50;
+    const safetyStock = item.safety_stock || 0;
+    const cycleDemand = Math.max(0, effectiveRop - safetyStock);
+    const ropMode = item.rop_mode || 'auto';
+
+    const drawerRopBadge = document.getElementById('drawerRopBadge');
+    if (drawerRopBadge) {
+        drawerRopBadge.textContent = ropMode === 'auto' ? 'Auto AI' : 'Manual Override';
+        drawerRopBadge.style.color = ropMode === 'auto' ? 'var(--accent-primary)' : 'var(--status-warning)';
+        drawerRopBadge.style.borderColor = ropMode === 'auto' ? 'rgba(139,92,246,0.4)' : 'rgba(245,158,11,0.4)';
+    }
+
+    const drawerCycleDemand = document.getElementById('drawerCycleDemand');
+    if (drawerCycleDemand) drawerCycleDemand.textContent = `${cycleDemand} units`;
+
+    const drawerSafetyStock = document.getElementById('drawerSafetyStock');
+    if (drawerSafetyStock) drawerSafetyStock.textContent = `${safetyStock} units`;
+
+    // Populate Accuracy & Reliability Telemetry Badge
+    const drawerAccuracyVal = document.getElementById('drawerAccuracyVal');
+    const drawerAccuracyBadge = document.getElementById('drawerAccuracyBadge');
+    if (drawerAccuracyVal) {
+        const itemAcc = (item.forecast_wape !== undefined && item.forecast_wape !== null) 
+            ? Math.max(0, 100 - item.forecast_wape).toFixed(1) 
+            : '92.4';
+        drawerAccuracyVal.textContent = `${itemAcc}%`;
+        if (drawerAccuracyBadge) {
+            const relTier = (item.forecast_reliability || 90) >= 85 ? 'var(--status-success)' : ((item.forecast_reliability || 90) >= 70 ? 'var(--status-warning)' : 'var(--status-danger)');
+            drawerAccuracyBadge.style.color = relTier;
+            drawerAccuracyBadge.style.borderColor = relTier;
+        }
+    }
+
+    const btnModeAuto = document.getElementById('btnModeAuto');
+    const btnModeManual = document.getElementById('btnModeManual');
+    const manualContainer = document.getElementById('drawerManualRopContainer');
+    const manualInput = document.getElementById('drawerManualRopInput');
+    const saveManualBtn = document.getElementById('drawerSaveManualRopBtn');
+
+    const updateModeUI = (mode) => {
+        if (mode === 'auto') {
+            if (btnModeAuto) {
+                btnModeAuto.classList.add('active');
+                btnModeAuto.style.background = 'var(--accent-primary)';
+                btnModeAuto.style.color = '#fff';
+            }
+            if (btnModeManual) {
+                btnModeManual.classList.remove('active');
+                btnModeManual.style.background = 'transparent';
+                btnModeManual.style.color = 'var(--text-muted)';
+            }
+            if (manualContainer) manualContainer.style.display = 'none';
+        } else {
+            if (btnModeAuto) {
+                btnModeAuto.classList.remove('active');
+                btnModeAuto.style.background = 'transparent';
+                btnModeAuto.style.color = 'var(--text-muted)';
+            }
+            if (btnModeManual) {
+                btnModeManual.classList.add('active');
+                btnModeManual.style.background = 'var(--status-warning)';
+                btnModeManual.style.color = '#fff';
+            }
+            if (manualContainer) {
+                manualContainer.style.display = 'flex';
+                if (manualInput) manualInput.value = item.reorder_point || 50;
+            }
+        }
+    };
+
+    updateModeUI(ropMode);
+
+    if (btnModeAuto) {
+        btnModeAuto.onclick = async () => {
+            try {
+                const token = localStorage.getItem('stockSense_jwt');
+                const res = await fetch(`/api/inventory/${encodeURIComponent(item.sku)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ rop_mode: 'auto' })
+                });
+                const d = await res.json();
+                if (d.status === 'success') {
+                    item.rop_mode = 'auto';
+                    updateModeUI('auto');
+                    if (drawerRopBadge) {
+                        drawerRopBadge.textContent = 'Auto AI';
+                        drawerRopBadge.style.color = 'var(--accent-primary)';
+                    }
+                    showToast(`Policy for ${item.sku} set to Auto AI`, 'success');
+                    if (typeof fetchInventory === 'function') fetchInventory();
+                } else {
+                    showToast('Failed to switch ROP mode', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error switching ROP mode', 'error');
+            }
+        };
+    }
+
+    if (btnModeManual) {
+        btnModeManual.onclick = () => {
+            updateModeUI('manual');
+        };
+    }
+
+    if (saveManualBtn) {
+        saveManualBtn.onclick = async () => {
+            const val = parseInt(manualInput ? manualInput.value : '0', 10);
+            if (isNaN(val) || val <= 0) {
+                showToast('Please enter a valid positive Reorder Point', 'warning');
+                return;
+            }
+            try {
+                const token = localStorage.getItem('stockSense_jwt');
+                const res = await fetch(`/api/inventory/${encodeURIComponent(item.sku)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ reorder_point: val, rop_mode: 'manual' })
+                });
+                const d = await res.json();
+                if (d.status === 'success') {
+                    item.reorder_point = val;
+                    item.rop_mode = 'manual';
+                    document.getElementById('drawerReorderPt').textContent = val;
+                    if (drawerRopBadge) {
+                        drawerRopBadge.textContent = 'Manual Override';
+                        drawerRopBadge.style.color = 'var(--status-warning)';
+                    }
+                    showToast(`Manual ROP for ${item.sku} saved: ${val}`, 'success');
+                    if (typeof fetchInventory === 'function') fetchInventory();
+                } else {
+                    showToast('Failed to save manual ROP', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error saving manual ROP', 'error');
+            }
+        };
+    }
     
     const supplierName = item.supplier && item.supplier.trim() ? item.supplier : `${item.category} Global Logistics`;
     document.getElementById('drawerSupplier').textContent = supplierName;
@@ -10483,22 +10704,6 @@ function updateRoiSliderFill(slider) {
     const isLight = document.body && document.body.classList.contains('light-mode');
     
     // In dark mode: white track fill till pointer, remaining part transparent
-    // In light mode: purple accent fill till pointer, soft transparent track after
-    const fillColor = isLight ? '#7c3aed' : '#ffffff';
-    const emptyColor = isLight ? 'rgba(15, 23, 42, 0.1)' : 'transparent';
-    
-    slider.style.setProperty('--roi-slider-fill', `${pct}%`);
-    slider.style.setProperty('background', `linear-gradient(to right, ${fillColor} 0%, ${fillColor} ${pct}%, ${emptyColor} ${pct}%, ${emptyColor} 100%)`, 'important');
-}
-
-function simulateROI() {
-    const slider = document.getElementById('roiBufferSlider');
-    if (!slider) return;
-    
-    const M = !isNaN(parseFloat(slider.value)) ? parseFloat(slider.value) : 1.4;
-    const sliderVal = document.getElementById('roiSliderVal');
-    if (sliderVal) sliderVal.innerText = M.toFixed(1) + 'x';
-    
     // Always update slider track fill in real-time while pointer is moving
     updateRoiSliderFill(slider);
     
@@ -10914,3 +11119,181 @@ function renderDependencyGraphUI(data) {
 
 
 
+
+
+// ====================================================
+// Closed-Loop Forecast Accuracy Audit & Model Scorecard
+// ====================================================
+
+let globalScorecardData = [];
+
+async function fetchAccuracyScorecard(silent = false) {
+    try {
+        const token = localStorage.getItem('stockSense_jwt');
+        const response = await fetch('/api/analytics/accuracy-scorecard', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return null;
+        const result = await response.json();
+        if (result.status === 'success' && result.data && result.data.has_audit) {
+            const d = result.data;
+            // Update Dashboard Pill
+            const dashPill = document.getElementById('dashboardAccuracyPill');
+            if (dashPill) {
+                dashPill.textContent = `${d.overall_accuracy.toFixed(1)}%`;
+            }
+
+            // Update Scorecard Modal KPIs
+            const accEl = document.getElementById('scorecardOverallAccuracy');
+            const wapeEl = document.getElementById('scorecardOverallWape');
+            const biasEl = document.getElementById('scorecardOverallBias');
+            const biasDirEl = document.getElementById('scorecardBiasDirection');
+            const highEl = document.getElementById('scorecardHighCount');
+            const modEl = document.getElementById('scorecardModCount');
+
+            if (accEl) accEl.textContent = `${d.overall_accuracy.toFixed(1)}%`;
+            if (wapeEl) wapeEl.textContent = `${d.overall_wape.toFixed(1)}%`;
+            if (biasEl) {
+                const sign = d.overall_bias > 0 ? '+' : '';
+                biasEl.textContent = `${sign}${d.overall_bias.toFixed(1)}%`;
+            }
+            if (biasDirEl) biasDirEl.textContent = d.bias_direction || 'Balanced Calibration';
+            if (highEl && d.reliability_summary) highEl.textContent = `${d.reliability_summary.high_reliability_count} High`;
+            if (modEl && d.reliability_summary) modEl.textContent = `${d.reliability_summary.moderate_drift_count} Mod`;
+
+            globalScorecardData = d.sku_scorecard || [];
+            renderScorecardTable(globalScorecardData);
+            return d;
+        }
+    } catch (e) {
+        if (!silent) console.error("Scorecard fetch error:", e);
+    }
+    return null;
+}
+
+function renderScorecardTable(items) {
+    const tbody = document.getElementById('scorecardTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">No SKU accuracy records found.</td></tr>';
+        return;
+    }
+
+    items.forEach(item => {
+        const tr = document.createElement('tr');
+        
+        let tierColor = 'var(--status-success)';
+        let tierBg = 'rgba(16,185,129,0.15)';
+        let tierBorder = 'rgba(16,185,129,0.3)';
+        if (item.status === 'Moderate Drift') {
+            tierColor = 'var(--status-warning)';
+            tierBg = 'rgba(245,158,11,0.15)';
+            tierBorder = 'rgba(245,158,11,0.3)';
+        } else if (item.status === 'Low Confidence') {
+            tierColor = 'var(--status-danger)';
+            tierBg = 'rgba(239,68,68,0.15)';
+            tierBorder = 'rgba(239,68,68,0.3)';
+        }
+
+        const biasSign = item.bias > 0 ? '+' : '';
+
+        tr.innerHTML = `
+            <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">${item.sku}</td>
+            <td style="font-weight: 600; color: #fff;">${item.name}</td>
+            <td style="color: var(--text-secondary); font-size: 0.82rem;">${item.category}</td>
+            <td style="text-align: center; font-weight: 700; color: var(--status-success);">${item.accuracy.toFixed(1)}%</td>
+            <td style="text-align: center; font-weight: 600; color: var(--accent-primary);">${item.wape.toFixed(1)}%</td>
+            <td style="text-align: center; font-weight: 600; color: ${Math.abs(item.bias) > 5 ? 'var(--status-warning)' : 'var(--text-secondary)'};">${biasSign}${item.bias.toFixed(1)}%</td>
+            <td style="text-align: center; white-space: nowrap;">
+                <span class="badge" style="background: ${tierBg}; color: ${tierColor}; border: 1px solid ${tierBorder}; font-size: 0.72rem; padding: 0.2rem 0.5rem;">${item.status}</span>
+            </td>
+            <td style="font-size: 0.78rem; color: var(--text-secondary);">${item.recommendation}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function openAccuracyScorecardModal() {
+    const modal = document.getElementById('accuracyScorecardModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    modal.style.pointerEvents = 'auto';
+    fetchAccuracyScorecard();
+}
+
+function closeAccuracyScorecardModal() {
+    const modal = document.getElementById('accuracyScorecardModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.style.pointerEvents = 'none';
+    }
+}
+
+// Bind scorecard event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const btnOpen = document.getElementById('btnOpenAccuracyScorecard');
+    if (btnOpen) {
+        btnOpen.addEventListener('click', openAccuracyScorecardModal);
+    }
+
+    const btnClose = document.getElementById('closeAccuracyScorecardModal');
+    if (btnClose) {
+        btnClose.addEventListener('click', closeAccuracyScorecardModal);
+    }
+
+    // Modal background click to close
+    const modal = document.getElementById('accuracyScorecardModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeAccuracyScorecardModal();
+        });
+    }
+
+    // Search input filtering
+    const searchInput = document.getElementById('scorecardSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = globalScorecardData.filter(item => 
+                item.sku.toLowerCase().includes(query) || 
+                item.name.toLowerCase().includes(query) ||
+                item.category.toLowerCase().includes(query)
+            );
+            renderScorecardTable(filtered);
+        });
+    }
+
+    // Tier filtering pills
+    const filterBtns = document.querySelectorAll('.scorecard-filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = 'rgba(255,255,255,0.1)';
+                b.style.background = 'rgba(255,255,255,0.03)';
+                b.style.color = 'var(--text-muted)';
+            });
+            btn.classList.add('active');
+            btn.style.borderColor = 'var(--accent-primary)';
+            btn.style.background = 'rgba(139,92,246,0.15)';
+            btn.style.color = '#fff';
+
+            const tier = btn.getAttribute('data-filter');
+            if (tier === 'all') {
+                renderScorecardTable(globalScorecardData);
+            } else {
+                const filtered = globalScorecardData.filter(item => item.status === tier);
+                renderScorecardTable(filtered);
+            }
+        });
+    });
+
+    // Initial silent load of scorecard metrics
+    setTimeout(() => fetchAccuracyScorecard(true), 1500);
+});
+
+window.openAccuracyScorecardModal = openAccuracyScorecardModal;
+window.closeAccuracyScorecardModal = closeAccuracyScorecardModal;
+window.fetchAccuracyScorecard = fetchAccuracyScorecard;

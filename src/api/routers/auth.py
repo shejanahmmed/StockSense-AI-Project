@@ -17,17 +17,22 @@ class UserProfile(BaseModel):
     industry: str
     avatar_url: str = ""
     password: str = ""
+    service_level_target: float = 0.95
+
+class ServiceLevelUpdate(BaseModel):
+    service_level_target: float
 
 @router.post("/api/user/login")
 async def login(profile: UserProfile):
     try:
         conn = sqlite3.connect(str(DB_PATH))
         cursor = conn.cursor()
-        cursor.execute('SELECT industry, avatar_url, password_hash, role FROM users WHERE org_name = ?', (profile.org_name,))
+        cursor.execute('SELECT industry, avatar_url, password_hash, role, service_level_target FROM users WHERE org_name = ?', (profile.org_name,))
         row = cursor.fetchone()
         
         if row:
             role = row[3] if row[3] else 'user'
+            sl_target = row[4] if len(row) > 4 and row[4] is not None else 0.95
             token = create_access_token({"sub": profile.org_name, "role": role})
             conn.close()
             return {
@@ -37,7 +42,8 @@ async def login(profile: UserProfile):
                     "org_name": profile.org_name,
                     "industry": row[0],
                     "avatar_url": row[1],
-                    "role": role
+                    "role": role,
+                    "service_level_target": sl_target
                 }
             }
         else:
@@ -45,9 +51,9 @@ async def login(profile: UserProfile):
             hashed_pw = hash_password(profile.password) if profile.password else ""
             role = "admin"
             cursor.execute('''
-                INSERT INTO users (org_name, industry, avatar_url, password_hash, role)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (profile.org_name, "Retail", "", hashed_pw, role))
+                INSERT INTO users (org_name, industry, avatar_url, password_hash, role, service_level_target)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (profile.org_name, "Retail", "", hashed_pw, role, 0.95))
             conn.commit()
             conn.close()
             token = create_access_token({"sub": profile.org_name, "role": role})
@@ -58,7 +64,8 @@ async def login(profile: UserProfile):
                     "org_name": profile.org_name,
                     "industry": "Retail",
                     "avatar_url": "",
-                    "role": role
+                    "role": role,
+                    "service_level_target": 0.95
                 }
             }
     except Exception as e:
@@ -102,15 +109,35 @@ async def save_user_profile(profile: UserProfile, user: dict = Depends(get_curre
         conn = sqlite3.connect(str(DB_PATH))
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT INTO users (org_name, industry, avatar_url) 
-            VALUES (?, ?, ?)
+            INSERT INTO users (org_name, industry, avatar_url, service_level_target) 
+            VALUES (?, ?, ?, ?)
             ON CONFLICT(org_name) DO UPDATE SET 
                 industry=excluded.industry,
-                avatar_url=excluded.avatar_url
-        ''', (profile.org_name, profile.industry, profile.avatar_url))
+                avatar_url=excluded.avatar_url,
+                service_level_target=excluded.service_level_target
+        ''', (profile.org_name, profile.industry, profile.avatar_url, profile.service_level_target))
         conn.commit()
         conn.close()
         return {"status": "success", "message": "Profile saved."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/api/user/service-level")
+async def update_service_level(payload: ServiceLevelUpdate, user: dict = Depends(get_current_user)):
+    try:
+        org_name = user.get("sub", "Unknown")
+        target = float(payload.service_level_target)
+        if target < 0.80 or target > 0.999:
+            raise HTTPException(status_code=400, detail="Service level target must be between 0.80 (80%) and 0.999 (99.9%).")
+            
+        conn = sqlite3.connect(str(DB_PATH))
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET service_level_target = ? WHERE org_name = ?", (target, org_name))
+        conn.commit()
+        conn.close()
+        return {"status": "success", "message": "Service level target updated.", "service_level_target": target}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -119,16 +146,18 @@ async def get_user_profile(org_name: str):
     try:
         conn = sqlite3.connect(str(DB_PATH))
         cursor = conn.cursor()
-        cursor.execute('SELECT org_name, industry, avatar_url FROM users WHERE org_name = ?', (org_name,))
+        cursor.execute('SELECT org_name, industry, avatar_url, service_level_target FROM users WHERE org_name = ?', (org_name,))
         row = cursor.fetchone()
         conn.close()
         if row:
+            sl_target = row[3] if len(row) > 3 and row[3] is not None else 0.95
             return {
                 "status": "success",
                 "data": {
                     "org_name": row[0],
                     "industry": row[1],
-                    "avatar_url": row[2]
+                    "avatar_url": row[2],
+                    "service_level_target": sl_target
                 }
             }
         else:

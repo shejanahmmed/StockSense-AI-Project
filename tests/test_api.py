@@ -132,3 +132,70 @@ def test_financials_semantic_search():
     assert "promotions" in data
     assert "query" in data
 
+
+
+# ── Dynamic ROP & Service Level Target ───────────────────────────────────────
+def test_user_service_level_target_flow():
+    """POST /api/user/service-level updates and validates service level target."""
+    # 1. Valid update
+    res = client.post("/api/user/service-level", json={"service_level_target": 0.98}, headers=AUTH_HEADERS)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert data["service_level_target"] == 0.98
+
+    # 2. Reflected in profile
+    res_prof = client.get("/api/user/profile", headers=AUTH_HEADERS)
+    assert res_prof.status_code == 200
+    assert res_prof.json()["service_level_target"] == 0.98
+
+    # 3. Invalid range (< 0.80)
+    res_bad1 = client.post("/api/user/service-level", json={"service_level_target": 0.50}, headers=AUTH_HEADERS)
+    assert res_bad1.status_code == 400
+
+    # 4. Invalid range (>= 1.0)
+    res_bad2 = client.post("/api/user/service-level", json={"service_level_target": 1.05}, headers=AUTH_HEADERS)
+    assert res_bad2.status_code == 400
+
+
+def test_inventory_rop_mode_and_update():
+    """PUT /api/inventory/{sku} updates rop_mode, reorder_point, and recomputes status."""
+    item = {
+        "sku": "ROP-TEST-SKU",
+        "name": "ROP Test Item",
+        "category": "Test Category",
+        "price": 50.0,
+        "stock": 40,
+        "reorder_point": 50,
+        "supplier_lead_days": 7,
+        "supplier": "Test Supplier",
+        "status": "In Stock"
+    }
+    # Create item
+    res_add = client.post("/api/inventory", json=item, headers=AUTH_HEADERS)
+    assert res_add.status_code == 200
+
+    # Read item back
+    res_get = client.get("/api/inventory", headers=AUTH_HEADERS)
+    assert res_get.status_code == 200
+    items = res_get.json()["data"]
+    match = next((x for x in items if x["sku"] == item["sku"]), None)
+    assert match is not None
+    assert "rop_mode" in match
+    assert "safety_stock" in match
+    assert "dynamic_rop" in match
+
+    # Update item to manual mode with custom ROP=30 (so stock 40 > 30 => In Stock)
+    res_up1 = client.put(f"/api/inventory/{item['sku']}", json={"reorder_point": 30, "rop_mode": "manual"}, headers=AUTH_HEADERS)
+    assert res_up1.status_code == 200
+    assert res_up1.json()["data"]["rop_mode"] == "manual"
+    assert res_up1.json()["data"]["reorder_point"] == 30
+    assert res_up1.json()["data"]["status"] == "In Stock"
+
+    # Update manual ROP=60 (so stock 40 <= 60 => Low Stock)
+    res_up2 = client.put(f"/api/inventory/{item['sku']}", json={"reorder_point": 60, "rop_mode": "manual"}, headers=AUTH_HEADERS)
+    assert res_up2.status_code == 200
+    assert res_up2.json()["data"]["status"] == "Low Stock"
+
+    # Cleanup
+    client.delete(f"/api/inventory/{item['sku']}", headers=AUTH_HEADERS)

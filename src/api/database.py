@@ -24,6 +24,10 @@ def init_db():
         cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
     except sqlite3.OperationalError:
         pass
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN service_level_target REAL DEFAULT 0.95")
+    except sqlite3.OperationalError:
+        pass
         
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS chat_history (
@@ -52,6 +56,13 @@ def init_db():
             units_sold INTEGER DEFAULT 0,
             last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
             competitor_price REAL,
+            safety_stock INTEGER DEFAULT 0,
+            dynamic_rop INTEGER DEFAULT 50,
+            rop_mode TEXT DEFAULT 'auto',
+            demand_std REAL DEFAULT 0.0,
+            forecast_wape REAL DEFAULT 0.0,
+            forecast_bias REAL DEFAULT 0.0,
+            forecast_reliability REAL DEFAULT 100.0,
             UNIQUE(org_name, sku)
         )
     ''')
@@ -63,11 +74,34 @@ def init_db():
         "ALTER TABLE inventory ADD COLUMN units_sold INTEGER DEFAULT 0",
         "ALTER TABLE inventory ADD COLUMN last_updated TEXT DEFAULT '2025-01-01'",
         "ALTER TABLE inventory ADD COLUMN competitor_price REAL",
+        "ALTER TABLE inventory ADD COLUMN safety_stock INTEGER DEFAULT 0",
+        "ALTER TABLE inventory ADD COLUMN dynamic_rop INTEGER DEFAULT 50",
+        "ALTER TABLE inventory ADD COLUMN rop_mode TEXT DEFAULT 'auto'",
+        "ALTER TABLE inventory ADD COLUMN demand_std REAL DEFAULT 0.0",
+        "ALTER TABLE inventory ADD COLUMN forecast_wape REAL DEFAULT 0.0",
+        "ALTER TABLE inventory ADD COLUMN forecast_bias REAL DEFAULT 0.0",
+        "ALTER TABLE inventory ADD COLUMN forecast_reliability REAL DEFAULT 100.0",
+        "ALTER TABLE users ADD COLUMN service_level_target REAL DEFAULT 0.95",
     ]:
         try:
             cursor.execute(col)
         except Exception:
             pass
+
+    # Create forecast_audits table for closed-loop model audit scorecard
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS forecast_audits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            org_name TEXT NOT NULL,
+            audit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            horizon_days INTEGER DEFAULT 7,
+            overall_accuracy REAL NOT NULL,
+            overall_wape REAL NOT NULL,
+            overall_bias REAL NOT NULL,
+            total_skus_evaluated INTEGER NOT NULL,
+            audit_payload TEXT NOT NULL
+        )
+    ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS forecasts (

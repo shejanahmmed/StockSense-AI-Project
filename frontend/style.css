@@ -13887,3 +13887,42 @@ body.light-mode #toggle-all-drivers:hover {
     flex-direction: column;
     gap: 0.45rem;
 }
+
+
+/* ====================================================
+   Dynamic Safety Stock & Adaptive ROP Engine UI Elements
+   ==================================================== */
+.rop-indicator-badge {
+    transition: all 0.2s ease;
+}
+
+.rop-pill-auto {
+    background: rgba(139, 92, 246, 0.15) !important;
+    color: var(--accent-primary) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+}
+
+.rop-pill-manual {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: var(--status-warning) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+.service-level-btn:hover {
+    border-color: rgba(139, 92, 246, 0.5) !important;
+    background: rgba(139, 92, 246, 0.08) !important;
+}
+
+.service-level-btn.active {
+    border-color: var(--accent-primary) !important;
+    background: rgba(139, 92, 246, 0.18) !important;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+.rop-mode-btn:hover {
+    opacity: 0.9;
+}
+
+.rop-mode-btn.active {
+    font-weight: 600;
+}

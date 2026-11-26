@@ -23,7 +23,10 @@ async def get_inventory(
         
         offset = (page - 1) * limit
         cursor.execute('''
-            SELECT sku, name, category, price, stock, supplier, status, reorder_point, supplier_lead_days, forecasted_demand, units_sold, competitor_price
+            SELECT sku, name, category, price, stock, supplier, status, reorder_point, 
+                   supplier_lead_days, forecasted_demand, units_sold, competitor_price,
+                   safety_stock, dynamic_rop, rop_mode, demand_std,
+                   forecast_wape, forecast_bias, forecast_reliability
             FROM inventory 
             WHERE org_name = ? 
             LIMIT ? OFFSET ?
@@ -34,6 +37,13 @@ async def get_inventory(
         # Get total count for metadata
         cursor.execute('SELECT COUNT(*) FROM inventory WHERE org_name = ?', (org_name,))
         total_count = cursor.fetchone()[0]
+
+        # Get service level target for this org
+        cursor.execute('SELECT service_level_target FROM users WHERE org_name = ?', (org_name,))
+        user_row = cursor.fetchone()
+        service_level_target = 0.95
+        if user_row and user_row["service_level_target"] is not None:
+            service_level_target = float(user_row["service_level_target"])
         
         conn.close()
         
@@ -45,7 +55,8 @@ async def get_inventory(
             "meta": {
                 "page": page,
                 "limit": limit,
-                "total": total_count
+                "total": total_count,
+                "service_level_target": service_level_target
             }
         }
     except Exception as e:
@@ -203,7 +214,7 @@ async def update_inventory(sku: str, item: dict, user: dict = Depends(get_curren
         # Update fields dynamically
         fields_to_update = []
         values = []
-        allowed_fields = ["name", "category", "price", "stock", "supplier", "status"]
+        allowed_fields = ["name", "category", "price", "stock", "supplier", "status", "reorder_point", "supplier_lead_days", "rop_mode"]
         
         for field in allowed_fields:
             if field in item:
@@ -214,6 +225,18 @@ async def update_inventory(sku: str, item: dict, user: dict = Depends(get_curren
             values.extend([org_name, sku])
             query = f"UPDATE inventory SET {', '.join(fields_to_update)} WHERE org_name = ? AND sku = ?"
             cursor.execute(query, tuple(values))
+            
+            # Recalculate status dynamically based on effective ROP
+            cursor.execute('SELECT stock, reorder_point, dynamic_rop, rop_mode FROM inventory WHERE org_name = ? AND sku = ?', (org_name, sku))
+            updated_row = cursor.fetchone()
+            if updated_row:
+                cur_stock = updated_row["stock"] or 0
+                cur_rop_mode = updated_row["rop_mode"] or "auto"
+                effective_rop = updated_row["dynamic_rop"] if cur_rop_mode == "auto" and updated_row["dynamic_rop"] else (updated_row["reorder_point"] or 50)
+                from src.api.routers.analytics import _compute_product_status
+                new_status = _compute_product_status(cur_stock, effective_rop)
+                cursor.execute('UPDATE inventory SET status = ? WHERE org_name = ? AND sku = ?', (new_status, org_name, sku))
+            
             conn.commit()
             
         conn.close()
