@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Query, Depends
 from pydantic import BaseModel
 import pandas as pd
+import numpy as np
 import io
 import hashlib
 from pathlib import Path
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 from src.pipeline.data_loader import validate_schema
 from src.pipeline.feature_engineering import create_date_features, create_lag_features, create_rolling_stats
@@ -18,6 +22,7 @@ from fpdf import FPDF
 import tempfile
 import os
 import holidays
+import datetime
 
 
 def _sanitize_pdf_text(text: str) -> str:
@@ -38,8 +43,6 @@ def _compute_product_status(stock: int, reorder_point: int) -> str:
         return "Out of Stock"
     if stock <= reorder_point:
         return "Low Stock"
-    if stock <= reorder_point * 1.5:
-        return "Warning"
     return "In Stock"
 
 

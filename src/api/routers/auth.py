@@ -132,12 +132,42 @@ async def update_service_level(payload: ServiceLevelUpdate, user: dict = Depends
             
         conn = sqlite3.connect(str(DB_PATH))
         cursor = conn.cursor()
-        cursor.execute("UPDATE users SET service_level_target = ? WHERE org_name = ?", (target, org_name))
+        cursor.execute('''
+            INSERT INTO users (org_name, service_level_target)
+            VALUES (?, ?)
+            ON CONFLICT(org_name) DO UPDATE SET service_level_target = excluded.service_level_target
+        ''', (org_name, target))
         conn.commit()
         conn.close()
         return {"status": "success", "message": "Service level target updated.", "service_level_target": target}
     except HTTPException:
         raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/api/user/profile")
+async def get_current_user_profile(user: dict = Depends(get_current_user)):
+    try:
+        org_name = user.get("sub", "Unknown")
+        conn = sqlite3.connect(str(DB_PATH))
+        cursor = conn.cursor()
+        cursor.execute('SELECT org_name, industry, avatar_url, service_level_target FROM users WHERE org_name = ?', (org_name,))
+        row = cursor.fetchone()
+        conn.close()
+        sl_target = row[3] if row and len(row) > 3 and row[3] is not None else 0.95
+        return {
+            "status": "success",
+            "org_name": row[0] if row else org_name,
+            "industry": row[1] if row else "",
+            "avatar_url": row[2] if row else "",
+            "service_level_target": sl_target,
+            "data": {
+                "org_name": row[0] if row else org_name,
+                "industry": row[1] if row else "",
+                "avatar_url": row[2] if row else "",
+                "service_level_target": sl_target
+            }
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

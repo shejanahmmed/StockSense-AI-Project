@@ -4792,8 +4792,8 @@ function initThemeToggle() {
     const themeBtn = document.getElementById('themeToggleBtn');
     if (!themeBtn) return;
 
-    // Load active theme preference or default to dark
-    const storedTheme = localStorage.getItem('theme') || 'dark';
+    // Load active theme preference or default to light (Pearl Aurora)
+    const storedTheme = localStorage.getItem('theme') || 'light';
     if (storedTheme === 'light') {
         themeBtn.classList.add('light');
         document.body.classList.add('light-mode');
@@ -4826,12 +4826,12 @@ function initThemeToggle() {
 function updateChartsForTheme() {
     const isLight = document.body.classList.contains('light-mode');
     
-    // Choose colors based on theme
-    const textColor = isLight ? '#475569' : '#ffffff';
-    const gridColor = isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(255, 255, 255, 0.05)';
+    // Choose colors based on theme (Pearl Aurora Light vs Midnight Dark)
+    const textColor = isLight ? '#626B80' : '#ffffff';
+    const gridColor = isLight ? 'rgba(99, 102, 241, 0.06)' : 'rgba(255, 255, 255, 0.05)';
     const tooltipBg = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(13, 13, 13, 0.9)';
-    const tooltipText = isLight ? '#0f172a' : '#ffffff';
-    const tooltipBorder = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.1)';
+    const tooltipText = isLight ? '#171A2B' : '#ffffff';
+    const tooltipBorder = isLight ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.1)';
     const pointBgColor = '#ffffff';
     
     // Set global Chart.js defaults

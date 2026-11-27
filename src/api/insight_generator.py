@@ -567,8 +567,8 @@ Guidelines:
     env = os.environ.get("DEPLOYMENT_ENV", "local").lower()
     
     if env == "production" and Groq is not None:
-        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
         try:
+            client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
             response = client.chat.completions.create(
                 messages=messages,
                 model="llama-3.3-70b-versatile",
@@ -578,9 +578,22 @@ Guidelines:
             return response.choices[0].message.content.strip()
         except Exception as e:
             logger.error(f"Chat Groq Error: {e}")
-            return f"I apologize, but I'm having an API error: {str(e)}"
+            # Fall through to local Ollama if Groq fails
+
     else:
-        # Fallback to dynamic structured mock if in local environment or Groq fails
+        # Local Ollama assistant
+        if ollama is not None:
+            try:
+                model_name = os.environ.get("OLLAMA_MODEL", "llama3.1")
+                response = ollama.chat(
+                    model=model_name,
+                    messages=messages
+                )
+                return response['message']['content'].strip()
+            except Exception as e:
+                logger.warning(f"Ollama chat error: {e}. Falling back to structured response.")
+
+        # Fallback to dynamic structured mock if in local environment without Ollama or if LLM fails
         items = _items_for_sim  # reuse pre-fetched items
 
 

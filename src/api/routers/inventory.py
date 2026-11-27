@@ -239,8 +239,11 @@ async def update_inventory(sku: str, item: dict, user: dict = Depends(get_curren
             
             conn.commit()
             
+        cursor.execute('SELECT sku, name, category, price, stock, reorder_point, dynamic_rop, rop_mode, status, supplier, supplier_lead_days FROM inventory WHERE org_name = ? AND sku = ?', (org_name, sku))
+        updated_item = cursor.fetchone()
         conn.close()
-        return {"status": "success", "message": "Item updated successfully."}
+        item_data = dict(updated_item) if updated_item else {}
+        return {"status": "success", "message": "Item updated successfully.", "data": item_data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
